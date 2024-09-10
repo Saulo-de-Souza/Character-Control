@@ -31,13 +31,7 @@ var spring_shape: SphereShape3D = SphereShape3D.new()
 		spring_collision_mask = value
 		if is_instance_valid(spring):
 			spring.collision_mask = spring_collision_mask
-@export var spring_position: Vector3 = Vector3(0, 2, 0):
-	get:
-		return spring_position
-	set(value):
-		spring_position = value
-		if is_instance_valid(spring):
-			spring.position = value
+var spring_position: Vector3 = Vector3(0, 2, 0)
 @export_range(0, 1000) var spring_rotation_h_sensitivity: float = 100:
 	get:
 		return spring_rotation_h_sensitivity
@@ -136,7 +130,7 @@ func _ready() -> void:
 		get_tree().root.get_child(0).add_child.call_deferred(spring)
 		player.collision_layer = player_collision_layer
 	else:
-		push_warning("CharacterControl: O nó pai não é um CharacterBody3D. Considere adicionar CharacterControl dentro de um CharacterBody3D como filho.")
+		push_warning("CharacterControl: The parent node is not a CharacterBody3D. Consider adding CharacterControl as a child within a CharacterBody3D.")
 
 	pass
 
