@@ -6,7 +6,7 @@ extends CharacterBody3D
 var player: CharacterBody3D
 var is_player_fps: bool = false
 @export_range(0, 1000) var player_move_speed: float = 300.0
-@export_range(1,10, 1, "or_greater") var player_collision_layer: int = 2:
+@export_range(1, 10, 1, "or_greater") var player_collision_layer: int = 2:
 	get:
 		return player_collision_layer
 	set(value):
@@ -53,12 +53,12 @@ var spring_shape: SphereShape3D = SphereShape3D.new()
 		return spring_min_rotation_v
 	set(value):
 		spring_min_rotation_v = value
-@export_range(-100, 100)  var spring_max_rotation_v: int = 7:
+@export_range(-100, 100) var spring_max_rotation_v: int = 7:
 	get:
 		return spring_max_rotation_v
 	set(value):
 		spring_max_rotation_v = value
-@export_range(0,10, 0.1, "or_greater") var spring_shape_radius: float = 0.1:
+@export_range(0, 10, 0.1, "or_greater") var spring_shape_radius: float = 0.1:
 	get:
 		return spring_shape_radius
 	set(value):
@@ -118,13 +118,14 @@ var button_r: bool = false
 var button_l: bool = false
 
 func _ready() -> void:
-	if not get_node_or_null("CollisionShape3D"):
+	if Engine.is_editor_hint() and not get_node_or_null("CollisionShape3D"):
 		var col = CollisionShape3D.new()
 		col.shape = null
 		add_child(col)
 
 	if get_parent() is CharacterBody3D:
 		player = get_parent()
+		player.velocity = Vector3.ZERO
 		spring.position = spring_position + spring_offset_position + player.position
 		spring.spring_length = spring_length
 		spring.collision_mask = spring_collision_mask
@@ -140,12 +141,18 @@ func _ready() -> void:
 	pass
 
 func _process(delta: float) -> void:
+	if Engine.is_editor_hint():
+		return
+
 	if get_parent() is CharacterBody3D:
 		get_joystick()
 		get_buttons()
 	pass
 
 func _physics_process(delta: float) -> void:
+	if Engine.is_editor_hint():
+		return
+
 	if get_parent() is CharacterBody3D:
 		player_gravity(delta)
 		player_jump(delta)
@@ -164,7 +171,7 @@ func get_joystick() -> void:
 
 	left_stick_angle = rad_to_deg(atan2(left_stick.y, left_stick.x))
 	left_stick_angle_clockwise = rad_to_deg(atan2(-left_stick.y, left_stick.x))
-	left_stick_angle_not_clockwise =  left_stick_angle
+	left_stick_angle_not_clockwise = left_stick_angle
 
 	if left_stick_angle_clockwise < 0:
 		left_stick_angle_clockwise += 360
@@ -181,7 +188,7 @@ func get_joystick() -> void:
 
 	right_stick_angle = rad_to_deg(atan2(right_stick.y, right_stick.x))
 	right_stick_angle_clockwise = rad_to_deg(atan2(-right_stick.y, right_stick.x))
-	right_stick_angle_not_clockwise =  right_stick_angle
+	right_stick_angle_not_clockwise = right_stick_angle
 
 	if right_stick_angle_clockwise < 0:
 		right_stick_angle_clockwise += 360
@@ -264,7 +271,7 @@ func spring_follow(delta) -> void:
 
 func player_jump(delta) -> void:
 	if button_a and player.is_on_floor():
-		player.velocity.y = 4
+		player.velocity.y = 5
 
 func player_gravity(delta) -> void:
 	if not player.is_on_floor():
